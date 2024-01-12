@@ -22,7 +22,7 @@ export class PostController {
     @Body() createPostDto: CreatePostDto,
   ): Promise<PostEntity> {
     this.postBO.start();
-    this.postBO.setData(createPostDto);
+    await this.postBO.setData(createPostDto);
     await this.postBO.save();
 
     const post = this.postBO.getPost();
