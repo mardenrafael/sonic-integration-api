@@ -1,20 +1,26 @@
-import pino from "pino";
 import {
   MiddlewareConsumer,
   Module,
   NestModule,
   RequestMethod,
 } from "@nestjs/common";
-import { HealthModule } from "./health/health.module";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { TypeOrmModule } from "@nestjs/typeorm";
 import { LoggerModule } from "nestjs-pino";
-import { ConfigModule } from "@nestjs/config";
-import { LogModule } from "./log/log.module";
+import pino from "pino";
+import { DatabaseModule } from "./database/database.module";
+import { HealthModule } from "./health/health.module";
 import { LogMiddleware } from "./log/log.middleware";
+import { LogModule } from "./log/log.module";
+import { PostModule } from "./post/post.module";
+import { UserModule } from "./user/user.module";
+import typeorm from "./database/config/typeorm";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      load: [typeorm],
     }),
     LoggerModule.forRoot({
       pinoHttp: {
@@ -25,8 +31,16 @@ import { LogMiddleware } from "./log/log.middleware";
         }),
       },
     }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) =>
+        configService.get("typeorm"),
+    }),
     HealthModule,
     LogModule,
+    DatabaseModule,
+    UserModule,
+    PostModule,
   ],
   controllers: [],
   providers: [],
