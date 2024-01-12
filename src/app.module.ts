@@ -18,9 +18,9 @@ import { LogMiddleware } from "./log/log.middleware";
     }),
     LoggerModule.forRoot({
       pinoHttp: {
-        useLevel: process.env.NODE_ENV === "development" ? "debug" : "info",
+        useLevel: "info",
         stream: pino.destination({
-          dest: process.env.NODE_LOG_PATH || process.stdout.fd,
+          dest: process.env.LOG_PATH || process.stdout.fd,
           sync: true,
         }),
       },
