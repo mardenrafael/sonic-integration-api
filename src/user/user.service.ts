@@ -1,25 +1,30 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { CreateUserDto } from "./dto/create-user.dto";
+import { DataSource, Repository } from "typeorm";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { DataSource } from "typeorm";
+import { User } from "./entities/user.entity";
 
 @Injectable()
 export class UserService {
   private readonly logger: Logger = new Logger(UserService.name);
 
-  constructor(private readonly dataSource: DataSource) {}
+  private readonly repository: Repository<User>;
 
-  public async create(createUserDto: CreateUserDto): Promise<string> {
-    this.logger.log(createUserDto);
-    return "This action adds a new user";
+  constructor(private readonly dataSource: DataSource) {
+    this.repository = this.dataSource.getRepository(User);
+  }
+
+  public async create(user: User): Promise<User> {
+    return await this.repository.save(user);
   }
 
   public async findAll(): Promise<string> {
     return `This action returns all user`;
   }
 
-  public async findOne(id: number): Promise<string> {
-    return `This action returns a #${id} user`;
+  public async findOneById(use_id: number): Promise<User> {
+    return await this.repository.findOneBy({
+      id: use_id,
+    });
   }
 
   public async update(
@@ -30,7 +35,9 @@ export class UserService {
     return `This action updates a #${id} user`;
   }
 
-  public async remove(id: number): Promise<string> {
-    return `This action removes a #${id} user`;
+  public async remove(id: number): Promise<void> {
+    await this.repository.delete({
+      id: id,
+    });
   }
 }
