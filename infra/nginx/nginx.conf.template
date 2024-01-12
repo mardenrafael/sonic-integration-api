@@ -2,9 +2,6 @@ upstream api {
     server api:${API_PORT};
 }
 
-upstream portainer {
-    server portainer:${PORTAINER_PORT};
-}
 
 server {
     listen       ${NGINX_API_PORT};
@@ -15,16 +12,5 @@ server {
     location / {
         proxy_set_header Host $host;
         proxy_pass http://api;
-    }
-}
-
-server {
-    listen       ${NGINX_PORTAINER_PORT};
-    server_name  localhost;
-
-    access_log  /var/log/nginx/portainer.access.log  main;
-
-    location / {
-        proxy_pass http://portainer;
     }
 }

@@ -19,6 +19,8 @@ services:
         ipv4_address: 10.1.0.10
     volumes:
       - db_data:/var/lib/postgresql/data
+    ports:
+      - "10.1.0.1:5432:5432"
 
   api:
     build:
@@ -44,23 +46,6 @@ services:
         condition: "service_healthy"
         restart: true
 
-  portainer:
-    image: portainer/portainer-ce:alpine
-    restart: always
-    container_name: sonic_portainer
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - portainer_data:/data
-    healthcheck:
-      test: "wget --no-verbose --tries=1 --spider http://localhost:9000 || exit 1"
-      interval: 20s
-      timeout: 5s
-      retries: 3
-      start_period: 20s
-    networks:
-      app_network:
-        ipv4_address: 10.1.0.12
-
   proxy:
     image: nginx
     container_name: sonic_proxy
@@ -81,13 +66,7 @@ services:
       retries: 5
       start_period: 15s
     depends_on:
-      database:
-        condition: "service_healthy"
-        restart: true
       api:
-        condition: "service_healthy"
-        restart: true
-      portainer:
         condition: "service_healthy"
         restart: true
 
