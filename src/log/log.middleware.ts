@@ -8,8 +8,6 @@ export class LogMiddleware implements NestMiddleware {
   constructor() {}
 
   use(req: Request, res: Response, next: NextFunction) {
-    this.logger.log("Teste");
-
     next();
   }
 }
