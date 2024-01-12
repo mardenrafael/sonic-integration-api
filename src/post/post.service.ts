@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
+import { Injectable, Logger } from "@nestjs/common";
+import { DataSource, Repository } from "typeorm";
+import { UpdatePostDto } from "./dto/update-post.dto";
+import { Post } from "./entities/post.entity";
 
 @Injectable()
 export class PostService {
-  create(createPostDto: CreatePostDto) {
-    return 'This action adds a new post';
+  private readonly logger: Logger = new Logger(PostService.name);
+
+  private readonly repository: Repository<Post>;
+
+  constructor(private readonly dataSource: DataSource) {
+    this.repository = this.dataSource.getRepository(Post);
   }
 
-  findAll() {
-    return `This action returns all post`;
+  public async create(post: Post): Promise<Post> {
+    return await this.repository.save(post);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  public async findOneById(use_id: number): Promise<Post> {
+    return await this.repository.findOneBy({
+      id: use_id,
+    });
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
+  public async update(
+    id: number,
+    updatePostDto: UpdatePostDto,
+  ): Promise<string> {
+    this.logger.log(updatePostDto);
     return `This action updates a #${id} post`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  public async remove(id: number): Promise<void> {
+    await this.repository.delete({
+      id: id,
+    });
   }
 }
