@@ -1,8 +1,8 @@
-import { UpdateUserDto } from "./../dto/update-user.dto";
-import { UserService } from "./../user.service";
-import { Inject, Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { User } from "src/user/entities/user.entity";
 import { CreateUserDto } from "../dto/create-user.dto";
+import { UpdateUserDto } from "./../dto/update-user.dto";
+import { UserService } from "./../user.service";
 
 @Injectable()
 export class UserBO {
@@ -11,7 +11,7 @@ export class UserBO {
   private user: User;
   private started: boolean;
 
-  constructor(@Inject() private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
   public start(): void {
     this.user = new User();
@@ -26,7 +26,7 @@ export class UserBO {
       throw new Error("Não iniciou o BO corretamente!");
     }
 
-    this.user.name = createUserDto.getName();
+    this.user.name = createUserDto.name;
   }
 
   public updateData(updateUserDto: UpdateUserDto): void {
@@ -34,7 +34,7 @@ export class UserBO {
       throw new Error("Não iniciou o BO corretamente!");
     }
 
-    this.user.name = updateUserDto.getName();
+    this.user.name = updateUserDto.name;
   }
 
   public async save(): Promise<void> {
