@@ -22,57 +22,8 @@ services:
     ports:
       - "10.1.0.1:5432:5432"
 
-  api:
-    build:
-      context: .
-    container_name: sonic_api
-    restart: always
-    env_file:
-      - .env
-    healthcheck:
-      test:
-        ["CMD-SHELL", "curl -f http://api:${API_PORT}/health/check || exit 1"]
-      interval: 5s
-      timeout: 3s
-      retries: 3
-      start_period: 5s
-    volumes:
-      - ./:/home/node/sonic
-    networks:
-      app_network:
-        ipv4_address: 10.1.0.11
-    depends_on:
-      database:
-        condition: "service_healthy"
-        restart: true
-
-  proxy:
-    image: nginx
-    container_name: sonic_proxy
-    volumes:
-      - ./infra/nginx/nginx.conf.template:/etc/nginx/templates/default.conf.template
-    ports:
-      - "10.1.0.1:80:${NGINX_API_PORT}"
-      - "10.1.0.1:9000:${NGINX_PORTAINER_PORT}"
-    env_file:
-      - .env
-    networks:
-      app_network:
-        ipv4_address: 10.1.0.13
-    healthcheck:
-      test: ["CMD-SHELL", "service nginx status"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-      start_period: 15s
-    depends_on:
-      api:
-        condition: "service_healthy"
-        restart: true
-
 volumes:
   db_data:
-  portainer_data:
 
 networks:
   app_network:
