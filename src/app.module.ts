@@ -6,30 +6,19 @@ import {
 } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { LoggerModule } from "nestjs-pino";
-import pino from "pino";
+import typeorm from "./database/config/typeorm";
 import { DatabaseModule } from "./database/database.module";
 import { HealthModule } from "./health/health.module";
 import { LogMiddleware } from "./log/log.middleware";
 import { LogModule } from "./log/log.module";
 import { PostModule } from "./post/post.module";
 import { UserModule } from "./user/user.module";
-import typeorm from "./database/config/typeorm";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeorm],
-    }),
-    LoggerModule.forRoot({
-      pinoHttp: {
-        useLevel: "info",
-        stream: pino.destination({
-          dest: process.env.LOG_PATH || process.stdout.fd,
-          sync: true,
-        }),
-      },
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
