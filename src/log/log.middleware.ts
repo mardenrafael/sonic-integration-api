@@ -8,6 +8,12 @@ export class LogMiddleware implements NestMiddleware {
   constructor() {}
 
   use(req: Request, res: Response, next: NextFunction) {
+    const userAgent = req.headers["user-agent"];
+    const method = req.method;
+    const hostName = req.hostname;
+    const pathName = req.path;
+
+    this.logger.log(`${method} [${userAgent}] [${hostName}] ${pathName}`);
     next();
   }
 }
